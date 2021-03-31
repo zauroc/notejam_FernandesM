@@ -13,6 +13,12 @@ Azure Loganalythics workspace.
 # Deployment notes
 Clone this repository
 
+Make sure you have access to an Azure subscription
+
+Using Visual Studio code open the cloned GitHub folder
+
+Type az login to login to your subscription in Azure 
+
 Make sure terraform CLI is installed using the command:    terraform
 
 Initialize terraform Azure modules using the command:    terraform init
