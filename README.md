@@ -3,6 +3,7 @@ This is a basic Azure Web App infrastructure deployment ready for a .Net V4.0 ap
 Azure Resource Group,
 Azure App Service Plan,
 Azure App Service for PROD with deployment slots DEV and UAT,
+Application Insights for production environment,
 Azure SQL Server with databases for PROD, DEV and UAT,
 Azure storage account for SQL audit,
 Azure KeyVault,
