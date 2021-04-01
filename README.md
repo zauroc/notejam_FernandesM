@@ -4,14 +4,14 @@ Azure Resource Group,
 Azure App Service Plan,
 Azure App Service for PROD with deployment slots DEV and UAT,
 Application Insights for production environment,
-Azure SQL Server with databases for PROD, DEV and UAT,
+Azure SQL Server with databases per slot environment: PROD, DEV and UAT,
 Azure storage account for SQL audit,
 Azure KeyVault,
 Azure Loganalythics workspace.
 
 ![image](https://user-images.githubusercontent.com/81716894/113217161-6a77d800-9275-11eb-98bf-8dd0e4a9160a.png)
 
-# Deployment notes
+# Deployment Notes
 Clone this repository
 
 Make sure you have access to an Azure subscription
