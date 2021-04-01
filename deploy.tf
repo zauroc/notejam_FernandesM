@@ -184,4 +184,85 @@ resource "azurerm_log_analytics_workspace" "slotsnotejam" {
   retention_in_days   = 30
   }
 
+# Deploying Application Insights in Azure
 
+resource "azurerm_application_insights" "slotsnotejamai" {
+  name                = "notejam-prod-appinsights"
+  location            = azurerm_resource_group.slotsnotejam.location
+  resource_group_name = azurerm_resource_group.slotsnotejam.name
+  application_type    = "web"
+}
+
+output "instrumentation_key" {
+  value = azurerm_application_insights.slotsnotejamai.instrumentation_key
+}
+
+output "app_id" {
+  value = azurerm_application_insights.slotsnotejamai.app_id
+}
+
+# Deploying Auto-Scaling for App Service in Azure
+
+resource "azurerm_monitor_autoscale_setting" "autoscale_setting" {
+  name                = "myAutoscaleSetting"
+  resource_group_name = azurerm_resource_group.slotsnotejam.name
+  location            = azurerm_resource_group.slotsnotejam.location
+  target_resource_id  = azurerm_app_service_plan.slotsnotejampl.id
+
+  profile {
+    name = "CpuProfile"
+
+    capacity {
+      default = 1
+      minimum = 1
+      maximum = 10
+    }
+
+    rule {
+      metric_trigger {
+        metric_name        = "CpuPercentage"
+        metric_resource_id = azurerm_app_service_plan.slotsnotejampl.id
+        time_grain         = "PT1M"
+        statistic          = "Average"
+        time_window        = "PT5M"
+        time_aggregation   = "Average"
+        operator           = "GreaterThan"
+        threshold          = 75
+      }
+
+      scale_action {
+        direction = "Increase"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT1M"
+      }
+    }
+
+    rule {
+      metric_trigger {
+        metric_name        = "CpuPercentage"
+        metric_resource_id = azurerm_app_service_plan.slotsnotejampl.id
+        time_grain         = "PT1M"
+        statistic          = "Average"
+        time_window        = "PT5M"
+        time_aggregation   = "Average"
+        operator           = "LessThan"
+        threshold          = 25
+      }
+
+      scale_action {
+        direction = "Decrease"
+        type      = "ChangeCount"
+        value     = "1"
+        cooldown  = "PT1M"
+      }
+    }
+  }
+
+  notification {
+    email {
+      send_to_subscription_administrator    = false
+      send_to_subscription_co_administrator = false
+    }
+  }
+}
