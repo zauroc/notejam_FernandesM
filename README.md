@@ -1,7 +1,7 @@
 # Azure App Service Deployment
 This is a basic Azure Web App infrastructure deployment ready for a .Net V4.0 application using Terraform V0.14.8 . It will be automatically deployed:
 Azure Resource Group,
-Azure App Service Plan,
+Azure App Service Plan with App Services auto-scaling,
 Azure App Service for PROD with deployment slots DEV and UAT,
 Application Insights for production environment,
 Azure SQL Server with databases per slot environment: PROD, DEV and UAT,
