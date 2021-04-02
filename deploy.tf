@@ -266,3 +266,49 @@ resource "azurerm_monitor_autoscale_setting" "autoscale_setting" {
     }
   }
 }
+
+# Deploying Monitoring in Azure
+
+resource "azurerm_storage_account" "to_monitor" {
+  name                     = "azmonitorsa001"
+  resource_group_name      = azurerm_resource_group.slotsnotejam.name
+  location                 = azurerm_resource_group.slotsnotejam.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+}
+
+resource "azurerm_monitor_action_group" "main" {
+  name                = "notejam-actiongroup"
+  resource_group_name = azurerm_resource_group.slotsnotejam.name
+  short_name          = "notejamact"
+
+  webhook_receiver {
+    name        = "callmyapi"
+    service_uri = "http://notejam.com/alert"
+  }
+}
+
+resource "azurerm_monitor_metric_alert" "example" {
+  name                = "notejam-metricalert"
+  resource_group_name = azurerm_resource_group.slotsnotejam.name
+  scopes              = [azurerm_storage_account.to_monitor.id]
+  description         = "Action will be triggered when Transactions count is greater than 50."
+
+  criteria {
+    metric_namespace = "Microsoft.Storage/storageAccounts"
+    metric_name      = "Transactions"
+    aggregation      = "Total"
+    operator         = "GreaterThan"
+    threshold        = 50
+
+    dimension {
+      name     = "ApiName"
+      operator = "Include"
+      values   = ["*"]
+    }
+  }
+
+  action {
+    action_group_id = azurerm_monitor_action_group.main.id
+  }
+}
