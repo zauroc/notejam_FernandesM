@@ -12,7 +12,7 @@ resource "azurerm_resource_group" "slotsnotejam" {
   }
 }
 
-# Deploying app service in Azure
+# Deploying Production app service in Azure
 
 resource "azurerm_app_service_plan" "slotsnotejampl" {
     name                = "appplan-uks-prod-001"
@@ -42,20 +42,36 @@ connection_string {
   }
 }
 
-resource "azurerm_app_service_slot" "slotsnotejamds" {
-    name                = "app-notejam-stg-001"
+# Deploying testing app service in Azure
+
+resource "azurerm_app_service_plan" "slotsnotejamplt" {
+    name                = "appplan-uks-test-001"
     location            = azurerm_resource_group.slotsnotejam.location
     resource_group_name = azurerm_resource_group.slotsnotejam.name
-    app_service_plan_id = azurerm_app_service_plan.slotsnotejampl.id
-    app_service_name    = azurerm_app_service.slotsnotejamsvc.name
+    sku {
+        tier = "Standard"
+        size = "S1"
+    }
 }
-resource "azurerm_app_service_slot" "slotsnotejamltgd" {
-    name                = "app-notejam-lstgood-001"
+
+resource "azurerm_app_service" "slotsnotejamsvct" {
+    name                = "appsv-uks-test-001"
     location            = azurerm_resource_group.slotsnotejam.location
     resource_group_name = azurerm_resource_group.slotsnotejam.name
-    app_service_plan_id = azurerm_app_service_plan.slotsnotejampl.id
-    app_service_name    = azurerm_app_service.slotsnotejamsvc.name
+    app_service_plan_id = azurerm_app_service_plan.slotsnotejamplt.id
+
+  site_config {
+    dotnet_framework_version = "v4.0"
+  }
+  
+connection_string {
+    name  = "Database"
+    type  = "SQLAzure"
+    value = "Server=tcp:azurerm_sql_server.sqldb.fully_qualified_domain_name Database=azurerm_sql_database.db.name;User ID=azurerm_sql_server.sqldb.administrator_login;Password=azurerm_sql_server.sqldb.administrator_login_password;Trusted_Connection=False;Encrypt=True;"
+    
+  }
 }
+
 
 # Deploying SQL Database in Azure
 
@@ -99,7 +115,7 @@ resource "azurerm_mssql_database" "slotsnotejamdb" {
 }
 
 resource "azurerm_mssql_database" "slotsnotejamdbdev" {
-  name           = "sqldb-notejam-stg"
+  name           = "sqldb-notejam-test"
   server_id      = azurerm_sql_server.slotsnotejamdbs.id
   collation      = "SQL_Latin1_General_CP1_CI_AS"
   license_type   = "LicenseIncluded"
@@ -116,32 +132,9 @@ resource "azurerm_mssql_database" "slotsnotejamdbdev" {
   }
 
   tags = {
-    environment = "Production"
+    environment = "Testing"
   }
 }
-
-resource "azurerm_mssql_database" "slotsnotejamdbuat" {
-  name           = "sqldb-notejam-lgood"
-  server_id      = azurerm_sql_server.slotsnotejamdbs.id
-  collation      = "SQL_Latin1_General_CP1_CI_AS"
-  license_type   = "LicenseIncluded"
-  max_size_gb    = 4
-  read_scale     = true
-  sku_name       = "BC_Gen5_2"
-  zone_redundant = true
-
-  extended_auditing_policy {
-    storage_endpoint                        = azurerm_storage_account.slotsnotejamsa.primary_blob_endpoint
-    storage_account_access_key              = azurerm_storage_account.slotsnotejamsa.primary_access_key
-    storage_account_access_key_is_secondary = true
-    retention_in_days                       = 6
-  }
-
-  tags = {
-    environment = "Production"
-  }
-}
-
 
 # Deploying KeyValut in Azure
 
