@@ -2,9 +2,9 @@
 This is a basic Azure Web App infrastructure deployment ready for a .Net V4.0 application using Terraform V0.14.8 . It will be automatically deploy 3 enironments Prod, Dev and UAT:
 Azure Resource Group,
 Azure App Service Plan with App Services auto-scaling,
-Azure App Service for with deployment slots for Staging and Last Good,
-Application Insights for production environment,
-Azure SQL Server with databases per slot environment: PROD, Staging and Last Good,
+Azure App Service with deployment slots with Staging and Last Good for DEV and UAT environments,
+Application Insights,
+Azure SQL Server with databases,
 Azure storage account for SQL audit,
 Azure Storage account for Azure Monitor,
 Azure KeyVault,
