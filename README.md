@@ -11,6 +11,7 @@ Azure KeyVault,
 Azure Loganalythics workspace.
 
 ![image](https://user-images.githubusercontent.com/81716894/113217161-6a77d800-9275-11eb-98bf-8dd0e4a9160a.png)
+For more details in the design please visit: https://docs.microsoft.com/en-us/azure/architecture/reference-architectures/app-service-web-app/basic-web-app?tabs=cli
 
 # Deployment Notes
 
